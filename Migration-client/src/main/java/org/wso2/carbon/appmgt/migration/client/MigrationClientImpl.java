@@ -16,7 +16,6 @@
 
 package org.wso2.carbon.appmgt.migration.client;
 
-import org.apache.axis2.AxisFault;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -29,22 +28,18 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.wso2.carbon.appmgt.api.AppManagementException;
 import org.wso2.carbon.appmgt.api.model.APIIdentifier;
-import org.wso2.carbon.appmgt.api.model.JavaPolicy;
 import org.wso2.carbon.appmgt.api.model.WebApp;
 import org.wso2.carbon.appmgt.impl.AppMConstants;
 import org.wso2.carbon.appmgt.impl.AppManagerConfiguration;
-import org.wso2.carbon.appmgt.impl.dao.AppMDAO;
-import org.wso2.carbon.appmgt.impl.dto.Environment;
-import org.wso2.carbon.appmgt.impl.service.ServiceReferenceHolder;
-import org.wso2.carbon.appmgt.impl.template.APITemplateBuilder;
-import org.wso2.carbon.appmgt.impl.template.APITemplateBuilderImpl;
 import org.wso2.carbon.appmgt.impl.utils.APIMgtDBUtil;
 import org.wso2.carbon.appmgt.impl.utils.AppManagerUtil;
-import org.wso2.carbon.appmgt.impl.utils.RESTAPIAdminClient;
 import org.wso2.carbon.appmgt.migration.APPMMigrationException;
 import org.wso2.carbon.appmgt.migration.client.dto.SynapseDTO;
 import org.wso2.carbon.appmgt.migration.client.internal.ServiceHolder;
-import org.wso2.carbon.appmgt.migration.util.*;
+import org.wso2.carbon.appmgt.migration.util.Constants;
+import org.wso2.carbon.appmgt.migration.util.MigratingWebApp;
+import org.wso2.carbon.appmgt.migration.util.RegistryService;
+import org.wso2.carbon.appmgt.migration.util.ResourceUtil;
 import org.wso2.carbon.base.MultitenantConstants;
 import org.wso2.carbon.context.PrivilegedCarbonContext;
 import org.wso2.carbon.governance.api.exception.GovernanceException;
@@ -61,7 +56,6 @@ import org.wso2.carbon.user.api.UserStoreException;
 import org.wso2.carbon.user.core.tenant.TenantManager;
 import org.wso2.carbon.utils.CarbonUtils;
 import org.wso2.carbon.utils.FileUtil;
-import org.wso2.carbon.utils.multitenancy.MultitenantUtils;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -79,9 +73,10 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.*;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.*;
-import java.util.Date;
 
 /**
  * This class contains all the methods which is used to migrate Webapps from App Manager 1.0.0 to App Manager 1.1.0.

@@ -67,7 +67,8 @@ public class APPMMigrationServiceComponent {
 
         try {
             APIMgtDBUtil.initialize();
-        } catch (Exception e) { //APIMgtDBUtil initialize method throws a generic exception.
+        } catch (Exception e) {
+        //APIMgtDBUtil initialize method throws a generic exception.
             log.error("Error occurred while initializing App Manager database utils.", e);
         }
 
@@ -75,7 +76,7 @@ public class APPMMigrationServiceComponent {
             if (migrateToVersion != null) {
                 if (Constants.VERSION_1_2_0.equalsIgnoreCase(migrateToVersion)) {
 
-                    log.info("Starting WSO2 App Manager 1.1.0 to 1.2.0 migration.");
+                    log.info("Starting WSO2 App Manager 1.2.0-M4 to 1.2.0 migration.");
 
                     RegistryServiceImpl registryService = new RegistryServiceImpl();
                     MigrationClient migrationClient = new MigrationClientImpl(tenants, registryService, tenantManager);
@@ -95,7 +96,7 @@ public class APPMMigrationServiceComponent {
                             log.error("Migration mode is not specified. Please specify the migration profile.");
                         }
                     }
-                    log.info("App Manager 1.1.0 to 1.2.0 migration successfully completed");
+                    log.info("App Manager 1.2.0-M4 to 1.2.0 migration successfully completed");
 
                 } else {
                     log.error("The given migrate version " + migrateToVersion +

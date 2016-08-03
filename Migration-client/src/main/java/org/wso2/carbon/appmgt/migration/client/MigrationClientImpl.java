@@ -418,6 +418,8 @@ public class MigrationClientImpl implements MigrationClient {
 
     private void updateServiceProvider(WebApp webApp) throws APPMMigrationException {
         SSOProvider ssoProvider = webApp.getSsoProviderDetails();
+        String acsURL = SSOConfiguratorUtil.getACSURL(webApp);
+        webApp.setAcsURL(acsURL);
         SSOConfiguratorUtil.getSSOProvider(ssoProvider.getProviderName(), ssoProvider.getProviderVersion(),
                 ssoProvider.getIssuerName());
         if (ssoProvider != null) {

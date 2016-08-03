@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS APM_ONE_TIME_DOWNLOAD_LINK(
 
 ALTER TABLE APM_APP ADD VISIBLE_ROLES varchar(500);
 
-UPDATE APM_APP_JAVA_POLICY SET FULL_QUALIFI_NAME = 'org.wso2.carbon.appmgt.gateway.handlers.security.authentication.SAML2AuthenticationHandler' WHERE FULL_QUALIFI_NAME = 'SAML2 Authentication Handler';
+UPDATE APM_APP_JAVA_POLICY SET FULL_QUALIFI_NAME = 'org.wso2.carbon.appmgt.gateway.handlers.security.authentication.SAML2AuthenticationHandler' WHERE DISPLAY_NAME = 'SAML2 Authentication Handler';
 
 INSERT INTO APM_APP_JAVA_POLICY(DISPLAY_NAME, FULL_QUALIFI_NAME, DESCRIPTION, DISPLAY_ORDER_SEQ_NO,IS_MANDATORY,IS_GLOBAL)
 VALUES ('Subscription Handler', 'org.wso2.carbon.appmgt.gateway.handlers.subscription.SubscriptionsHandler', '', 3,TRUE,TRUE);

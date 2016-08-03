@@ -148,6 +148,11 @@
             <version>${carbon.appmgt.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.wso2.carbon.appmgt</groupId>
+            <artifactId>org.wso2.carbon.appmgt.gateway</artifactId>
+            <version>${carbon.appmgt.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <version>6.8.5</version>

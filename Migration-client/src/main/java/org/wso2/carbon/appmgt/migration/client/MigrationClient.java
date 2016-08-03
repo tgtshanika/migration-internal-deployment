@@ -51,4 +51,9 @@ public interface MigrationClient {
      * @throws org.wso2.carbon.appmgt.migration.APPMMigrationException
      */
     public void synapseFileSystemMigration();
+
+    /**
+     * This method is used to migrate service providers for gateway apps
+     */
+    public void serviceProviderMigration();
 }

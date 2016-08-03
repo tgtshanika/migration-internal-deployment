@@ -157,7 +157,6 @@ public class ResourceUtil {
 
     private static DocumentBuilder getDocumentBuilder(String fileName) throws APPMMigrationException {
         DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-        docFactory.setNamespaceAware(true);
         DocumentBuilder docBuilder = null;
         try {
             docFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

@@ -36,6 +36,7 @@ public class Constants {
     public static final String ARG_MIGRATE_DB = "migrateDB";
     public static final String ARG_MIGRATE_REG = "migrateReg";
     public static final String ARG_MIGRATE_FILE_SYSTEM = "migrateFS";
+    public static final String ARG_MIGRATE_SP = "migrateSP";
 
     public static final String MIGRATION_SCRIPTS_LOCATION = "/dbscripts/migration-scripts/1.1.0-1.2.0-migration/";
     public static final String MIGRATION_RESOURCES_LOCATION = "/repository/resources";
@@ -57,10 +58,9 @@ public class Constants {
 
     //Synapse Configuration related
     public static final String SYNAPSE_API_ROOT_ELEMENT = "api";
-    public static final String SYNAPSE_API_XMLNS = "http://ws.apache.org/ns/synapse";
-    public static final String SYNAPSE_IN_SEQUENCE_ELEMENT = "inSequence";
-    public static final String SYNAPSE_PROPERTY_ELEMENT = "property";
-    public static final String SYNAPSE_API_ATTRIBUTE_NAME = "name";
+    public static final String SYNAPSE_HANDLER_CLASS= "class";
+    public static final String SYNAPSE_HANDLER= "handler";
+
     public static final String SYNAPSE_API_ATTRIBUTE_VERSION = "version";
     public static final String SYNAPSE_API_ATTRIBUTE_VALUE = "value";
     public static final String SYNAPSE_API_ATTRIBUTE_EXPRESSION = "expression";
@@ -68,8 +68,19 @@ public class Constants {
 
     public static final String MOBILE_APP_DEFAULT_CATEGORY = "Business";
 
-
-
     //database types
     public static final String DB_TYPE_ORACLE = "oracle";
+
+    public static class SynapseHandlers {
+
+        public static final String SAML_AUTHENTICATION_HANDLER_OLD =
+                "org.wso2.carbon.appmgt.gateway.handlers.security.saml2.SAML2AuthenticationHandler";
+        public static final String SAML_AUTHENTICATION_HANDLER =
+                "org.wso2.carbon.appmgt.gateway.handlers.security.authentication.SAML2AuthenticationHandler";
+        public static final String SUBSCRIPTIONS_HANDLER =
+                "org.wso2.carbon.appmgt.gateway.handlers.subscription.SubscriptionsHandler";
+        public static final String AUTHORIZATION_HANDLER =
+                "org.wso2.carbon.appmgt.gateway.handlers.security.entitlement.AuthorizationHandler";
+
+    }
 }

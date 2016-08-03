@@ -19,6 +19,7 @@ package org.wso2.carbon.appmgt.migration.client.internal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.osgi.service.component.ComponentContext;
+import org.wso2.carbon.appmgt.gateway.token.TokenGenerator;
 import org.wso2.carbon.appmgt.impl.AppManagerConfigurationService;
 import org.wso2.carbon.appmgt.impl.utils.APIMgtDBUtil;
 import org.wso2.carbon.appmgt.migration.APPMMigrationException;
@@ -44,6 +45,9 @@ import org.wso2.carbon.user.core.tenant.TenantManager;
  * policy="dynamic" bind="setTenantRegistryLoader" unbind="unsetTenantRegistryLoader"
  * @scr.reference name="appm.configuration" interface="org.wso2.carbon.appmgt.impl.AppManagerConfigurationService" cardinality="1..1"
  * policy="dynamic" bind="setApiManagerConfig" unbind="unsetApiManagerConfig"
+ * @scr.reference name="app.manager.jwt.token,generator"
+ * interface="org.wso2.carbon.appmgt.gateway.token.TokenGenerator" cardinality="1..n"
+ * policy="dynamic" bind="setTokenGenerator" unbind="unsetTokenGenerator"
  */
 
 public class APPMMigrationServiceComponent {
@@ -64,6 +68,7 @@ public class APPMMigrationServiceComponent {
         boolean isDBMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_DB));
         boolean isRegistryMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_REG));
         boolean isFileSystemMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_FILE_SYSTEM));
+        boolean isServiceProviderMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_SP));
 
         try {
             APIMgtDBUtil.initialize();
@@ -92,7 +97,10 @@ public class APPMMigrationServiceComponent {
                             migrationClient.registryResourceMigration();
                         } else if (isFileSystemMigration) {
                             migrationClient.synapseFileSystemMigration();
-                        } else {
+                        } else if(isServiceProviderMigration){
+                            migrationClient.serviceProviderMigration();
+                        }
+                        else {
                             log.error("Migration mode is not specified. Please specify the migration profile.");
                         }
                     }
@@ -205,6 +213,14 @@ public class APPMMigrationServiceComponent {
      */
     protected void unsetApiManagerConfig(AppManagerConfigurationService appManagerConfig) {
         ServiceHolder.setAppManagerConfigurationService(null);
+    }
+
+    public void setTokenGenerator(TokenGenerator tokenGenerator) {
+
+    }
+
+    public void unsetTokenGenerator(TokenGenerator tokenGenerator) {
+
     }
 
 }

@@ -7,13 +7,13 @@
     <files>
         <file>
             <source>${project.basedir}/src/main/resources/1.1.0-1.2.0-migration/sql-scripts/constraint/drop-fk.sql</source>
-            <outputDirectory>migration-scripts/1.1.0-1.2.0-migration</outputDirectory>
+            <outputDirectory>migration-scripts/dbscripts/constraints/</outputDirectory>
         </file>
     </files>
     <fileSets>
         <fileSet>
             <directory>${project.basedir}/src/main/resources/1.1.0-1.2.0-migration/sql-scripts</directory>
-            <outputDirectory>migration-scripts/1.1.0-1.2.0-migration</outputDirectory>
+            <outputDirectory>migration-scripts/dbscripts/appmgt/1.1.0-1.2.0-migration</outputDirectory>
             <includes>
                 <include>*.sql</include>
             </includes>

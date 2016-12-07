@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2015, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
+* Copyright (c) 2016, WSO2 Inc. (http://www.wso2.org) All Rights Reserved.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
@@ -68,12 +68,11 @@ public class APPMMigrationServiceComponent {
         boolean isDBMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_DB));
         boolean isRegistryMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_REG));
         boolean isFileSystemMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_FILE_SYSTEM));
-        boolean isServiceProviderMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_SP));
 
         try {
             APIMgtDBUtil.initialize();
         } catch (Exception e) {
-        //APIMgtDBUtil initialize method throws a generic exception.
+            //APIMgtDBUtil initialize method throws a generic exception.
             log.error("Error occurred while initializing App Manager database utils.", e);
         }
 
@@ -81,7 +80,7 @@ public class APPMMigrationServiceComponent {
             if (migrateToVersion != null) {
                 if (Constants.VERSION_1_2_0.equalsIgnoreCase(migrateToVersion)) {
 
-                    log.info("Starting WSO2 App Manager 1.2.0-M4 to 1.2.0 migration.");
+                    log.info("Starting WSO2 App Manager 1.1.0 to 1.2.0 migration.");
 
                     RegistryServiceImpl registryService = new RegistryServiceImpl();
                     MigrationClient migrationClient = new MigrationClientImpl(tenants, registryService, tenantManager);
@@ -97,14 +96,11 @@ public class APPMMigrationServiceComponent {
                             migrationClient.registryResourceMigration();
                         } else if (isFileSystemMigration) {
                             migrationClient.synapseFileSystemMigration();
-                        } else if(isServiceProviderMigration){
-                            migrationClient.serviceProviderMigration();
-                        }
-                        else {
+                        } else {
                             log.error("Migration mode is not specified. Please specify the migration profile.");
                         }
                     }
-                    log.info("App Manager 1.2.0-M4 to 1.2.0 migration successfully completed");
+                    log.info("App Manager 1.1.0 to 1.2.0 migration successfully completed");
 
                 } else {
                     log.error("The given migrate version " + migrateToVersion +
@@ -117,7 +113,7 @@ public class APPMMigrationServiceComponent {
             log.error("Error occurred while initializing migration client for App Manager 1.2.0 migration", e);
         } catch (UserStoreException e) {
             log.error("Error occurred while initializing migration client for App Manager 1.2.0 migration", e);
-        } catch (Exception e){
+        } catch (Exception e) {
             log.error("Error occurred while executing App Manager Migration client 1.2.0 ", e);
         }
     }

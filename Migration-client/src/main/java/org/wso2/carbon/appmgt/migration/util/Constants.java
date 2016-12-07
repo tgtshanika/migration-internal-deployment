@@ -36,9 +36,8 @@ public class Constants {
     public static final String ARG_MIGRATE_DB = "migrateDB";
     public static final String ARG_MIGRATE_REG = "migrateReg";
     public static final String ARG_MIGRATE_FILE_SYSTEM = "migrateFS";
-    public static final String ARG_MIGRATE_SP = "migrateSP";
 
-    public static final String MIGRATION_SCRIPTS_LOCATION = "/dbscripts/migration-scripts/1.1.0-1.2.0-migration/";
+    public static final String MIGRATION_SCRIPTS_LOCATION = "/dbscripts/appmgt/1.1.0-1.2.0-migration/";
     public static final String MIGRATION_RESOURCES_LOCATION = "/repository/resources";
     public static final String MIGRATION_RXT_LOCATION = MIGRATION_RESOURCES_LOCATION + "/rxts/";
     public static final String MIGRATION_LIFECYCLE_LOCATION = MIGRATION_RESOURCES_LOCATION + "/lifecycles/";
@@ -57,14 +56,21 @@ public class Constants {
     public static final String MOBILEAPP_RXT = "mobileapp";
 
     //Synapse Configuration related
-    public static final String SYNAPSE_API_ROOT_ELEMENT = "api";
     public static final String SYNAPSE_HANDLER_CLASS= "class";
     public static final String SYNAPSE_HANDLER= "handler";
 
     public static final String SYNAPSE_API_ATTRIBUTE_VERSION = "version";
+    public static final String SYNAPSE_API_ATTRIBUTE_NAME = "name";
     public static final String SYNAPSE_API_ATTRIBUTE_VALUE = "value";
     public static final String SYNAPSE_API_ATTRIBUTE_EXPRESSION = "expression";
     public static final String SYNAPSE_API_NO_VERSION_PROPERTY = "noVersion";
+    public static final String SYNAPSE_IN_SEQUENCE_ELEMENT = "inSequence";
+    public static final String SYNAPSE_PROPERTY_ELEMENT = "property";
+    public static final String SYNAPSE_API_ROOT_ELEMENT = "api";
+
+
+
+
 
     public static final String MOBILE_APP_DEFAULT_CATEGORY = "Business";
 

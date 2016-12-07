@@ -30,18 +30,7 @@
                 <checksumPolicy>ignore</checksumPolicy>
             </releases>
         </repository>
-        <repository>
-            <id>wso2.snapshots</id>
-            <name>WSO2 Snapshot Repository</name>
-            <url>http://maven.wso2.org/nexus/content/repositories/snapshots/</url>
-            <snapshots>
-                <enabled>true</enabled>
-                <updatePolicy>daily</updatePolicy>
-            </snapshots>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-        </repository>
+
     </repositories>
 
     <build>
@@ -169,7 +158,7 @@
     <properties>
         <carbon.appmgt.version>1.2.0</carbon.appmgt.version>
         <carbon.governance.version>4.6.2</carbon.governance.version>
-        <carbon.kernel.version>4.4.5</carbon.kernel.version>
-        <carbon.platform.version>4.4.5</carbon.platform.version>
+        <carbon.kernel.version>4.4.7</carbon.kernel.version>
+        <carbon.platform.version>4.4.7</carbon.platform.version>
     </properties>
 </project>

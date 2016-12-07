@@ -31,7 +31,7 @@ public interface MigrationClient {
 
     /**
      * This method is used to migrate databases. This method adds the newly added columns, tables and alters the tables
-     * according to the new database
+     * according to the new database schema
      *
      * @throws APPMMigrationException
      */

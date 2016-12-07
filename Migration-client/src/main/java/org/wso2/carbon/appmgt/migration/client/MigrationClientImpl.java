@@ -162,6 +162,8 @@ public class MigrationClientImpl implements MigrationClient {
             migrateRxts();
             migrateLifeCycles();
             registryArtifactMigration();
+            signUpConfigurationMigration();
+            updateTenantStoreConfiguration();
         } catch (APPMMigrationException e) {
             log.error("Error occurred while migrating registry resources for App Manager 1.2.0", e);
         }
@@ -234,7 +236,7 @@ public class MigrationClientImpl implements MigrationClient {
             connection = APIMgtDBUtil.getConnection();
             connection.setAutoCommit(false);
             prepStmt = connection.prepareStatement(query);
-            for(String webappUUID : webappRoleMapping.keySet()){
+            for (String webappUUID : webappRoleMapping.keySet()) {
                 prepStmt.setString(1, webappRoleMapping.get(webappUUID));
                 prepStmt.setString(2, webappUUID);
                 prepStmt.addBatch();
@@ -350,9 +352,9 @@ public class MigrationClientImpl implements MigrationClient {
                 for (GenericArtifact webAppArtifact : artifacts) {
                     WebApp webapp = AppManagerUtil.getAPI(webAppArtifact, registry);
 
-                    if(!webapp.getSkipGateway()){
+                    if (!webapp.getSkipGateway()) {
                         String appSSOProvider = webAppArtifact.getAttribute("sso_ssoProvider");
-                        if(StringUtils.isNotEmpty(appSSOProvider)){
+                        if (StringUtils.isNotEmpty(appSSOProvider)) {
                             String[] providerData = appSSOProvider.split("-");
                             SSOProvider ssoProvider = new SSOProvider();
                             ssoProvider.setProviderName(providerData[0]);
@@ -389,17 +391,17 @@ public class MigrationClientImpl implements MigrationClient {
     private void updateGatewayAppServiceProvider(ArrayList<WebApp> gatewayWebapps) {
         for (WebApp webApp : gatewayWebapps) {
             final WebApp webapp = webApp;
-            Thread deployerThread = new Thread(){
+            Thread deployerThread = new Thread() {
                 @Override
                 public void run() {
                     boolean done = false;
-                    while(!done){
+                    while (!done) {
                         try {
 
                             updateServiceProvider(webapp);
                             done = true;
 
-                        }catch (Throwable e){
+                        } catch (Throwable e) {
                             log.warn("Retrying");
                             try {
                                 Thread.sleep(10000);
@@ -438,6 +440,35 @@ public class MigrationClientImpl implements MigrationClient {
             for (SynapseDTO synapseDTO : synapseDTOs) {
 
                 Document document = synapseDTO.getDocument();
+
+                NodeList resourceNodes = document.getElementsByTagName("resource");
+                for (int i = 0; i < resourceNodes.getLength(); i++) {
+                    Element resourceElement = (Element) resourceNodes.item(i);
+                    Element inSequenceElement = (Element) resourceElement.getElementsByTagName(Constants.SYNAPSE_IN_SEQUENCE_ELEMENT).item(0);
+                    //Set attribute values to in sequence 'noVersion' property
+
+                    //Find the property element in the inSequence
+                    NodeList propertyElements = inSequenceElement.getElementsByTagName(Constants.SYNAPSE_PROPERTY_ELEMENT);
+
+                    boolean isNoVersionPropertyExists = false;
+                    for (int j = 0; j < propertyElements.getLength(); j++) {
+                        Element propertyElement = (Element) propertyElements.item(j);
+                        if ("POST_TO_URI".equals(propertyElement.getAttribute(Constants.SYNAPSE_API_ATTRIBUTE_NAME))) {
+                            propertyElement.setAttribute(Constants.SYNAPSE_API_ATTRIBUTE_VALUE, "false");
+                        } else if ("noVersion".equals(propertyElement.getAttribute(Constants.SYNAPSE_API_ATTRIBUTE_NAME))) {
+                            isNoVersionPropertyExists = true;
+                        }
+                    }
+                    if (!isNoVersionPropertyExists) {
+                        Element newElement = document.createElement(Constants.SYNAPSE_PROPERTY_ELEMENT);
+                        newElement.setAttribute(Constants.SYNAPSE_API_ATTRIBUTE_NAME, Constants.SYNAPSE_API_NO_VERSION_PROPERTY);
+                        newElement.setAttribute(Constants.SYNAPSE_API_ATTRIBUTE_EXPRESSION, "get-property('transport', 'WSO2_APPM_INVOKED_WITHOUT_VERSION')");
+                        newElement.setAttribute(Constants.SYNAPSE_API_ATTRIBUTE_VALUE, "true");
+                        inSequenceElement.insertBefore(newElement, inSequenceElement.getFirstChild());
+                    }
+
+                }
+
                 XPathFactory xPathfactory = XPathFactory.newInstance();
                 XPath xpath = xPathfactory.newXPath();
                 XPathExpression expr = xpath.compile("//handlers/handler[@class=\'org.wso2.carbon.appmgt.gateway.handlers.security.saml2.SAML2AuthenticationHandler\']");
@@ -460,7 +491,7 @@ public class MigrationClientImpl implements MigrationClient {
                     samlHandler.getParentNode().insertBefore(subscriptionsHandlerElement, samlHandler.getNextSibling());
 
                 }
-               ResourceUtil.transformXMLDocument(document, synapseDTO.getFile());
+                ResourceUtil.transformXMLDocument(document, synapseDTO.getFile());
             }
             if (log.isDebugEnabled()) {
                 log.debug("Synapse configuration file system migration for tenant " + tenant.getDomain() + "is completed successfully");
@@ -553,9 +584,44 @@ public class MigrationClientImpl implements MigrationClient {
 
                     webAppArtifact.removeAttribute(AppMConstants.API_OVERVIEW_BUSS_OWNER);
                     webAppArtifact.addAttribute(AppMConstants.API_OVERVIEW_BUSS_OWNER, "");
-                    if(StringUtils.isNotEmpty(webapp.getVisibleRoles().trim())){
+
+                    webAppArtifact.removeAttribute(AppMConstants.APP_OVERVIEW_MAKE_AS_DEFAULT_VERSION);
+                    webAppArtifact.addAttribute(AppMConstants.APP_OVERVIEW_MAKE_AS_DEFAULT_VERSION, "false");
+
+                    webAppArtifact.removeAttribute(AppMConstants.APP_OVERVIEW_OLD_VERSION);
+                    webAppArtifact.addAttribute(AppMConstants.APP_OVERVIEW_OLD_VERSION, "");
+
+                    webAppArtifact.removeAttribute(AppMConstants.APP_OVERVIEW_TREAT_AS_A_SITE);
+                    webAppArtifact.addAttribute(AppMConstants.APP_OVERVIEW_TREAT_AS_A_SITE, "FALSE");
+
+                    webAppArtifact.removeAttribute(AppMConstants.API_OVERVIEW_BUSS_OWNER);
+                    webAppArtifact.addAttribute(AppMConstants.API_OVERVIEW_BUSS_OWNER, "");
+
+                    if (StringUtils.isNotEmpty(webapp.getVisibleRoles().trim())) {
                         webappRoleMapping.put(webapp.getUUID(), webapp.getVisibleRoles());
                     }
+
+                    String resourcePath = webAppArtifact.getPath();
+                    Resource resource = registry.get(resourcePath);
+                    Properties properties = resource.getProperties();
+
+                    Iterator<Object> propertyKeySetItr = properties.keySet().iterator();
+                    ArrayList<String> propertyLeyList = new ArrayList<String>();
+                    while (propertyKeySetItr.hasNext()) {
+                        Object key = propertyKeySetItr.next();
+                        propertyLeyList.add(key.toString());
+                    }
+
+                    ArrayList<String> mandatoryPropertyList = getMandatoryArtifactProperties();
+
+                    //Remove unwanted properties in webapp artifact in order to avoid indexing issues
+                    for (String propertyKey : propertyLeyList) {
+                        if (!mandatoryPropertyList.contains(propertyKey)) {
+                            resource.removeProperty(propertyKey);
+                        }
+                    }
+                    //Update the registry artifact resource after removing the unwanted properties
+                    registry.put(resourcePath, resource);
                 }
                 registryService.updateGenericArtifacts(AppMConstants.WEBAPP_ASSET_TYPE, artifacts);
 
@@ -678,7 +744,7 @@ public class MigrationClientImpl implements MigrationClient {
             registry.put(resourcePath, resource);
 
         } catch (org.wso2.carbon.registry.core.exceptions.RegistryException e) {
-            handleException("Error occurred while removing artifact properties for artifact id : "+artifact.getId(), e);
+            handleException("Error occurred while removing artifact properties for artifact id : " + artifact.getId(), e);
         }
     }
 
@@ -772,7 +838,7 @@ public class MigrationClientImpl implements MigrationClient {
                         Constants.MIGRATION_TENANT_STORE_CONFIG, e);
             } catch (JSONException e) {
                 handleException("Error occurred while migrating tenant store configuration in registry path " +
-                        Constants.MIGRATION_TENANT_STORE_CONFIG +". Failed to parse content into JSON", e);
+                        Constants.MIGRATION_TENANT_STORE_CONFIG + ". Failed to parse content into JSON", e);
             } finally {
                 registryService.endTenantFlow();
             }

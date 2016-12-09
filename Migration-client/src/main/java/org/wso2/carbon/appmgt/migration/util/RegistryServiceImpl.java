@@ -42,6 +42,7 @@ import org.wso2.carbon.registry.core.jdbc.realm.RegistryAuthorizationManager;
 import org.wso2.carbon.registry.core.utils.RegistryUtils;
 import org.wso2.carbon.user.api.Tenant;
 import org.wso2.carbon.user.api.UserStoreException;
+import org.wso2.carbon.user.core.UserRealm;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
@@ -302,9 +303,9 @@ public class RegistryServiceImpl implements RegistryService {
                         RegistryConstants.GOVERNANCE_REGISTRY_BASE_PATH));
         // calculate resource path
         RegistryAuthorizationManager authorizationManager = new RegistryAuthorizationManager(
-                ServiceReferenceHolder.getUserRealm());
+                (UserRealm) ServiceHolder.getRealmService().getTenantUserRealm(tenant.getId()));
         resourcePath = authorizationManager.computePathOnMount(resourcePath);
-        org.wso2.carbon.user.api.AuthorizationManager authManager = ServiceReferenceHolder.getInstance()
+        org.wso2.carbon.user.api.AuthorizationManager authManager = ServiceHolder
                 .getRealmService()
                 .getTenantUserRealm(tenant.getId())
                 .getAuthorizationManager();

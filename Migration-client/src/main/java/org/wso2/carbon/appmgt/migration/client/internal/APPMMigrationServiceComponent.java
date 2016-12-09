@@ -45,9 +45,6 @@ import org.wso2.carbon.user.core.tenant.TenantManager;
  * policy="dynamic" bind="setTenantRegistryLoader" unbind="unsetTenantRegistryLoader"
  * @scr.reference name="appm.configuration" interface="org.wso2.carbon.appmgt.impl.AppManagerConfigurationService" cardinality="1..1"
  * policy="dynamic" bind="setApiManagerConfig" unbind="unsetApiManagerConfig"
- * @scr.reference name="app.manager.jwt.token,generator"
- * interface="org.wso2.carbon.appmgt.gateway.token.TokenGenerator" cardinality="1..n"
- * policy="dynamic" bind="setTokenGenerator" unbind="unsetTokenGenerator"
  */
 
 public class APPMMigrationServiceComponent {
@@ -68,7 +65,6 @@ public class APPMMigrationServiceComponent {
         boolean isDBMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_DB));
         boolean isRegistryMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_REG));
         boolean isFileSystemMigration = Boolean.parseBoolean(System.getProperty(Constants.ARG_MIGRATE_FILE_SYSTEM));
-
         try {
             APIMgtDBUtil.initialize();
         } catch (Exception e) {
@@ -211,12 +207,5 @@ public class APPMMigrationServiceComponent {
         ServiceHolder.setAppManagerConfigurationService(null);
     }
 
-    public void setTokenGenerator(TokenGenerator tokenGenerator) {
-
-    }
-
-    public void unsetTokenGenerator(TokenGenerator tokenGenerator) {
-
-    }
 
 }

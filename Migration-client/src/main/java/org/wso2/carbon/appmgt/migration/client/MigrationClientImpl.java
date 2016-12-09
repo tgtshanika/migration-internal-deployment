@@ -352,9 +352,9 @@ public class MigrationClientImpl implements MigrationClient {
                 for (GenericArtifact webAppArtifact : artifacts) {
                     WebApp webapp = AppManagerUtil.getAPI(webAppArtifact, registry);
 
-                    if (!webapp.getSkipGateway()) {
+                    if(!webapp.getSkipGateway()){
                         String appSSOProvider = webAppArtifact.getAttribute("sso_ssoProvider");
-                        if (StringUtils.isNotEmpty(appSSOProvider)) {
+                        if(StringUtils.isNotEmpty(appSSOProvider)){
                             String[] providerData = appSSOProvider.split("-");
                             SSOProvider ssoProvider = new SSOProvider();
                             ssoProvider.setProviderName(providerData[0]);
@@ -381,41 +381,10 @@ public class MigrationClientImpl implements MigrationClient {
             if (log.isDebugEnabled()) {
                 log.debug("End of webapp registry artifact migration for tenant " + tenant.getDomain());
             }
-            updateGatewayAppServiceProvider(gatewayWebapps);
         }
 
         log.info("Webapp registry artifact migration is completed successfully");
 
-    }
-
-    private void updateGatewayAppServiceProvider(ArrayList<WebApp> gatewayWebapps) {
-        for (WebApp webApp : gatewayWebapps) {
-            final WebApp webapp = webApp;
-            Thread deployerThread = new Thread() {
-                @Override
-                public void run() {
-                    boolean done = false;
-                    while (!done) {
-                        try {
-
-                            updateServiceProvider(webapp);
-                            done = true;
-
-                        } catch (Throwable e) {
-                            log.warn("Retrying");
-                            try {
-                                Thread.sleep(10000);
-                            } catch (InterruptedException e1) {
-                            }
-
-                        }
-                    }
-                }
-            };
-            deployerThread.setDaemon(true);
-            deployerThread.setName("SSOProviderUpdate");
-            deployerThread.start();
-        }
     }
 
     private void updateServiceProvider(WebApp webApp) throws APPMMigrationException {
@@ -491,7 +460,7 @@ public class MigrationClientImpl implements MigrationClient {
                     samlHandler.getParentNode().insertBefore(subscriptionsHandlerElement, samlHandler.getNextSibling());
 
                 }
-                ResourceUtil.transformXMLDocument(document, synapseDTO.getFile());
+               ResourceUtil.transformXMLDocument(document, synapseDTO.getFile());
             }
             if (log.isDebugEnabled()) {
                 log.debug("Synapse configuration file system migration for tenant " + tenant.getDomain() + "is completed successfully");
